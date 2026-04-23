@@ -1,0 +1,47 @@
+<mujoco model="underwater_rov">
+
+    <option density="1000" viscosity="0.001"/>
+
+    <asset>
+        <mesh name="rov_model" file="rov_model.stl" scale="0.0015 0.0015 0.0015"/>
+    </asset>
+
+    <worldbody>
+        <!--Floor-->
+        <geom type="box" size="5 5 0.05" pos="0 0 -0.05" rgba="0 0 1 1"/>
+        <!--L/R Wall-->
+        <geom type="box" size="5 0.05 1" pos="0 -5 1" rgba="0 0 1 0.3"/>
+        <geom type="box" size="5 0.05 1" pos="0 5 1" rgba="0 0 1 0.3"/>
+        <!--Front/Back Wall-->
+        <geom type="box" size="0.05 5 1" pos="5 0 1" rgba="0 0 1 0.3"/>
+        <geom type="box" size="0.05 5 1" pos="-5 0 1" rgba="0 0 1 0.3"/>
+        <!--ROV-->
+        <body name="rov_and_collision_box">
+            <!--ROV weighs roughly 18 kg intertia set to 1 since not rotating-->
+            <inertial mass="18" pos="0 0 0" diaginertia="1 1 1"/>
+            <!--Move on X and Y axis-->
+            <joint name="slide_x" type="slide" axis="1 0 0"/>
+            <joint name="slide_y" type="slide" axis="0 1 0"/>
+            <!-- <joint name="hinge_z" type="hinge" axis="0 0 1"/> -->
+            <!--ROV and Collision Box-->
+            <geom name="rov" type="mesh" mesh="rov_model" pos="0 0 1" euler="90 90 0"/>
+            <geom name="collision" type="box" size="0.49 0.67 0.3" pos="0.2 0 1" rgba="1 0 0 0.0" euler="0 0 90"  fluidcoef="1.5 0.25 1.5 0 0" fluidshape="ellipsoid"/>
+            <!--FrontLeft-->
+            <site name="front_left" pos="0.33 0.4 0.92" euler="-90 45 0" size="0.05 0.05 0.05" rgba="1 0 0 1"/>
+            <!--FrontRight-->
+            <site name="front_right" pos="0.33 -0.4 0.92" euler="90 45 0" size="0.05 0.05 0.05" rgba="1 0 0 1"/>
+            <!--BackLeft-->
+            <site name="back_left" pos="-0.33 0.4 0.92" euler="90 45 0" size="0.05 0.05 0.05" rgba="1 0 0 1"/>
+            <!--BackRight-->
+            <site name="back_right" pos="-0.33 -0.4 0.92" euler="-90 45 0" size="0.05 0.05 0.05" rgba="1 0 0 1"/>
+        </body>
+    </worldbody>
+
+    <actuator>
+        <!--Blue Robotics T200 thrusters have max forward thrust of 3.71 and 2.92 converted to N-->
+        <motor name="thruster1" site="front_left" gear="36.40" forcerange="-28.65 36.40" ctrlrange="-1 1"/>
+        <motor name="thruster2" site="front_right" gear="36.40" forcerange="-28.65 36.40" ctrlrange="-1 1"/>
+        <motor name="thruster3" site="back_left" gear="36.40" forcerange="-28.65 36.40" ctrlrange="-1 1"/>
+        <motor name="thruster4" site="back_right" gear="36.40" forcerange="-28.65 36.40" ctrlrange="-1 1"/>
+    </actuator>
+</mujoco>
